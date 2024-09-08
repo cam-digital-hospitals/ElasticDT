@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-influxdb-pv
+  labels:
+    app: {{ .Release.Name }}-influxdb
+spec:
+  capacity:
+    storage: {{ .Values.persistence.size | default "10Gi" }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.persistence.storageClassName | default "standard" }}
+  hostPath:
+    path: {{ .Values.persistence.hostPath | default "/data/influxdb_data/" }}
+{{- if .Values.persistence.nodeAffinity }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: {{ .Values.persistence.nodeAffinity.key }}
+              operator: {{ .Values.persistence.nodeAffinity.operator }}
+              values: {{ toYaml .Values.persistence.nodeAffinity.values | nindent 14 }}
+{{- end }}

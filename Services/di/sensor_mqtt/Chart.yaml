@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mosquitto-telegraf
+description: A Helm chart for Mosquitto and Telegraf on Kubernetes
+
+version: 1.0.0
+appVersion: "latest"

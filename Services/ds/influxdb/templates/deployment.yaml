@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-influxdb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-influxdb
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-influxdb
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-influxdb
+    spec:
+      containers:
+        - name: influxdb
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "2.7-alpine" }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+          - name: DOCKER_INFLUXDB_INIT_MODE
+            value: setup
+          - name: DOCKER_INFLUXDB_INIT_USERNAME
+            value: {{ .Values.admin.username | default "root" }}
+          - name: DOCKER_INFLUXDB_INIT_PASSWORD
+            value: {{ .Values.admin.password | default "password" }}
+          - name: DOCKER_INFLUXDB_INIT_ORG
+            value: {{ .Values.admin.org | default "camdt" }}
+          - name: DOCKER_INFLUXDB_INIT_BUCKET
+            value: {{ .Values.admin.bucket | default "default" }}
+          - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+            value: {{ .Values.admin.token | default "super-secret-token" }}
+          - name: INFLUXDB_HTTP_AUTH_ENABLED
+            value: "true"
+          volumeMounts:
+            - name: influxdb-data
+              mountPath: /var/lib/influxdb
+      volumes:
+        - name: influxdb-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-influxdb-pvc

@@ -1,0 +1,29 @@
+replicas: 1
+
+image:
+  repository: grafana/grafana
+  tag: "9.5.3"
+
+config:
+  root_url: http://localhost/grafana/
+  serve_from_sub_path: true
+  enforce_domain: false
+  allow_embedding: true
+  anonymous_enabled: true
+  org_name: Main Org.
+  org_role: Viewer
+  hide_version: true
+  device_limit: 5
+
+ingress:
+  enabled: true                     # Enable Ingress
+  hostname: grafana.localhost
+  path: /grafana
+  ingressClassName: traefik          # Change the ingressClassName to traefik
+  annotations:                       # Add Traefik-specific annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.tls: "true"  # Use TLS for secure access (optional)
+
+service:
+  type: ClusterIP
+  port: 3000

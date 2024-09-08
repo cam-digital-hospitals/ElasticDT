@@ -1,0 +1,39 @@
+replicaCount: 1
+
+image:
+  repository: influxdb
+  tag: "2.7-alpine"
+  pullPolicy: IfNotPresent
+
+admin:
+  enabled: true
+  username: root
+  password: password
+  org: camdt
+  bucket: default
+  token: super-secret-token
+
+authEnabled: true
+
+persistence:
+  enabled: true
+  storageClass: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+service:
+  type: ClusterIP
+  port: 8086
+
+# Traefik Ingress Configuration
+ingress:
+  enabled: true
+  ingressClassName: traefik           # Use Traefik as the Ingress Controller
+  hostname: influxdb.localhost        # Change this if using a custom domain
+  path: /
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  tls:
+    enabled: false                    # Set to true if using TLS/HTTPS
+    secretName: influxdb-tls-secret    # Only if TLS is enabled

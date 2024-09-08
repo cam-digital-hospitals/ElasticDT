@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-telegraf
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-telegraf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-telegraf
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-telegraf
+    spec:
+      containers:
+      - name: telegraf
+        image: telegraf:latest
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: /etc/telegraf/telegraf.conf
+          subPath: telegraf.conf
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: {{ .Release.Name }}-telegraf-config

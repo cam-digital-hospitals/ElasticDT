@@ -1,0 +1,25 @@
+# Telegraf configuration for Mosquitto public broker and InfluxDB output
+telegraf:
+  mqtt:
+    broker_url: "tcp://test.mosquitto.org:1883"
+    topics: ["CamDT/DC1/IfM/#"]
+  influxdb:
+    url: "http://influxdb2-influxdb.monitoring.svc.cluster.local:8086"
+    token: "super-secret-token"
+    org: "camdt"
+    bucket: "default"
+
+# Ingress Configuration for Traefik
+ingress:
+  enabled: true
+  ingressClassName: traefik                   # Use Traefik as the Ingress Controller
+  hostname: telegraf.localhost                # Change to the desired hostname
+  path: /
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  tls:
+    enabled: false                            # Set to true if using TLS/HTTPS
+    secretName: telegraf-tls-secret            # Only if TLS is enabled
+
+service:
+  port: 8086

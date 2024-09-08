@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-telegraf-config
+  namespace: {{ .Release.Namespace }}
+data:
+  telegraf.conf: |
+    [global_tags]
+      dc = "eu-west-2"
+
+    [agent]
+      interval = "10s"
+      round_interval = true
+      metric_buffer_limit = 10000
+      collection_jitter = "0s"
+      flush_jitter = "0s"
+      precision = ""
+      debug = false
+      quiet = false
+      logfile = ""
+
+    # MQTT Consumer for Light Sensor
+    [[inputs.mqtt_consumer]]
+      servers = ["{{ .Values.telegraf.mqtt.broker_url }}"]
+      topics = ["{{ index .Values.telegraf.mqtt.topics 0 }}"]
+      data_format = "json_v2"
+      topic_tag = ""
+      qos = 1
+
+    [[inputs.mqtt_consumer.json_v2]]
+      measurement_name = "light_reading"
+      timestamp_path = "timestamp"
+      timestamp_format = "2006-01-02T15:04:05.000Z"
+      
+      [[inputs.mqtt_consumer.json_v2.field]]
+        path = "lux"
+        type = "float"
+      [[inputs.mqtt_consumer.json_v2.tag]]
+        path = "machine"
+        type = "string"
+
+    # MQTT Consumer for Temperature Sensor
+    [[inputs.mqtt_consumer]]
+      servers = ["{{ .Values.telegraf.mqtt.broker_url }}"]
+      topics = ["{{ index .Values.telegraf.mqtt.topics 0 }}"]
+      data_format = "json_v2"
+      topic_tag = ""
+      qos = 1
+
+    [[inputs.mqtt_consumer.json_v2]]
+      measurement_name = "temperature_reading"
+      timestamp_path = "timestamp"
+      timestamp_format = "2006-01-02T15:04:05.000Z"
+      
+      [[inputs.mqtt_consumer.json_v2.field]]
+        path = "temp"
+        type = "float"
+      [[inputs.mqtt_consumer.json_v2.tag]]
+        path = "machine"
+        type = "string"
+
+    [[outputs.influxdb_v2]]
+      urls = ["{{ .Values.telegraf.influxdb.url }}"]
+      token = "{{ .Values.telegraf.influxdb.token }}"
+      organization = "{{ .Values.telegraf.influxdb.org }}"
+      bucket = "{{ .Values.telegraf.influxdb.bucket }}"
