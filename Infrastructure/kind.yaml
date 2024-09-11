@@ -1,0 +1,15 @@
+# Values for the kind k8s cluster itself
+# Create the cluster using ". create_cluster.sh"
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: elastic-dt
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30000
+        hostPort: 80
+      - containerPort: 30001
+        hostPort: 9000
+        # Limit the traefik dashboard to localhost
+        listenAddress: "127.0.0.1"
