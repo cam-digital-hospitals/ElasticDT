@@ -1,0 +1,13 @@
+apiVersion: v2
+name: grafana
+description: A Helm chart for deploying Grafana on Kubernetes
+
+# Version of the chart (follows semantic versioning)
+version: 1.0.0
+
+# Version of the Grafana application being deployed
+appVersion: "9.5.3"
+
+maintainers:
+  - name: Anand
+    email: am2910@cam.ac.uk

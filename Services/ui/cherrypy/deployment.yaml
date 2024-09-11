@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cherrypy-webpage
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cherrypy-webpage
+  template:
+    metadata:
+      labels:
+        app: cherrypy-webpage
+    spec:
+      containers:
+        - name: cherrypy-webpage
+          image: anandarup1987/trafeik-endpoint:latest
+          ports:
+            - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cherrypy-webpage
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: 8081
+  selector:
+    app: cherrypy-webpage
