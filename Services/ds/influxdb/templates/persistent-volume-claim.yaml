@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-influxdb-pvc
+  name: {{ .Release.Name }}-pvc
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}-influxdb
+    app: {{ .Release.Name }}
 spec:
-  volumeName: {{ .Release.Name }}-influxdb-pv
+  volumeName: {{ .Release.Name }}-pv
   storageClassName: {{ .Values.persistence.storageClassName | default "standard" }}
   accessModes:
     - ReadWriteOnce

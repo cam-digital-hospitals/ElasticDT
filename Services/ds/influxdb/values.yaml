@@ -26,14 +26,10 @@ service:
   type: ClusterIP
   port: 8086
 
-# Traefik Ingress Configuration
-ingress:
+# HTTPRoute Configuration for Traefik
+traefik:
   enabled: true
-  ingressClassName: traefik           # Use Traefik as the Ingress Controller
-  hostname: influxdb.localhost        # Change this if using a custom domain
+  namespace: traefik  # Namespace of the traefik chart
+  hostName: influxdb.localhost
   path: /
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-  tls:
-    enabled: false                    # Set to true if using TLS/HTTPS
-    secretName: influxdb-tls-secret    # Only if TLS is enabled
+  stripPrefix: false

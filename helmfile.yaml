@@ -5,3 +5,32 @@ releases:
     version: 31.0.0
     values:
       - ./Infrastructure/traefik.yaml
+  - name: ui-homepage
+    namespace: elasticdt
+    chart: ./Services/ui/homepage
+    values:
+      - container:
+          image: ghcr.io/cam-digital-hospitals/elasticdt/ui-homepage
+          tag: latest
+      - service:
+          port: 8081
+      - traefik:
+          enabled: true
+          hostName: localhost
+          path: /
+  - name: ds-influxdb
+    namespace: elasticdt
+    chart: ./Services/ds/influxdb
+    values:
+      - admin:
+          username: root
+          password: password
+          org: camdt
+          bucket: default
+          token: super-secret-token
+      - service:
+          port: 8086
+      - traefik:
+          enabled: true
+          hostName: influxdb.localhost
+          path: /

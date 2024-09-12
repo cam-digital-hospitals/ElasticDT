@@ -1,5 +1,5 @@
 container:
-  image: ghcr.io/cam-digital-hospitals/ui-homepage
+  image: ghcr.io/cam-digital-hospitals/elasticdt/ui-homepage
   tag: latest
 
 service:
