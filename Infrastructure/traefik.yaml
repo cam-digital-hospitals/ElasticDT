@@ -15,7 +15,10 @@ providers:
     enabled: true
 # Allow the Gateway to expose HTTPRoute from all namespaces
 gateway:
-  namespacePolicy: All
+  listeners:
+    web:
+      namespacePolicy: All
+
 # Include routing rule for the dashboard.
 ingressRoute:
   dashboard:

@@ -1,0 +1,7 @@
+releases:
+  - name: traefik
+    namespace: traefik
+    chart: oci://ghcr.io/traefik/helm/traefik
+    version: 31.0.0
+    values:
+      - ./Infrastructure/traefik.yaml
