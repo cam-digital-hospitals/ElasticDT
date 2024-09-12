@@ -11,7 +11,6 @@ class TraefikEndpoints:
                 <ul>
                     <li><a href="http://grafana.localhost/grafana" target="_blank">Grafana</a></li>
                     <li><a href="http://influxdb.localhost" target="_blank">InfluxDB</a></li>
-                    <li><a href="http://telegraf.localhost" target="_blank">Telegraf</a></li>
                 </ul>
             </body>
         </html>

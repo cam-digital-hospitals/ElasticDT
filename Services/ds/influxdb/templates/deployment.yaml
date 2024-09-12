@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-influxdb
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}-influxdb
+    app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-influxdb
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-influxdb
+        app: {{ .Release.Name }}
     spec:
       containers:
         - name: influxdb
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "2.7-alpine" }}
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: 8086
           env:
           - name: DOCKER_INFLUXDB_INIT_MODE
             value: setup
@@ -36,9 +36,9 @@ spec:
           - name: INFLUXDB_HTTP_AUTH_ENABLED
             value: "true"
           volumeMounts:
-            - name: influxdb-data
+            - name: {{ .Release.Name }}-data
               mountPath: /var/lib/influxdb
       volumes:
-        - name: influxdb-data
+        - name: {{ .Release.Name }}-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-influxdb-pvc
+            claimName: {{ .Release.Name }}-pvc

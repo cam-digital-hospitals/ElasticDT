@@ -34,3 +34,16 @@ releases:
           enabled: true
           hostName: influxdb.localhost
           path: /
+  - name: di-mqtt
+    namespace: elasticdt
+    chart: ./Services/di/sensor_mqtt
+    values:
+      - telegraf:
+          mqtt:
+            broker_url: "tcp://test.mosquitto.org:1883"
+            topics: ["CamDT/DC1/IfM/#"]
+          influxdb:
+            url: "http://influxdb.monitoring:8086"
+            token: "super-secret-token"
+            org: "camdt"
+            bucket: "default"
