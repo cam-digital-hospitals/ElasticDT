@@ -1,0 +1,14 @@
+apiVersion: v2
+name: homepage
+description: A Helm chart for deploying InfluxDB on Kubernetes
+
+# A semantic version of the chart itself
+version: 1.1.0
+
+# The version of the application being deployed
+appVersion: "latest"
+
+# You can add more metadata as needed
+maintainers:
+  - name: Anand
+    email: am2910@cam.ac.uk

@@ -1,6 +1,8 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
+LABEL org.opencontainers.image.source=https://github.com/cam-digital-hospitals/ElasticDT
+
 # Set the working directory in the container
 WORKDIR /app
 
