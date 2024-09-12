@@ -2,7 +2,7 @@ releases:
   - name: traefik
     namespace: traefik
     chart: oci://ghcr.io/traefik/helm/traefik
-    version: 31.0.0
+    version: "31.0.0"
     values:
       - ./Infrastructure/traefik.yaml
   - name: ui-homepage
@@ -47,3 +47,21 @@ releases:
             token: "super-secret-token"
             org: "camdt"
             bucket: "default"
+  - name: ui-grafana
+    namespace: elasticdt
+    chart: ./Services/ui/grafana
+    values:
+      - image:
+          tag: "9.5.3"
+      - config:
+          serve_from_sub_path: true
+          root_url: "http://localhost/grafana/"
+          anonymous_enabled: true
+          org_name: "Main Org."
+          org_role: "Viewer"
+      - service:
+          port: 3000
+      - traefik:
+          enabled: true
+          hostName: grafana.localhost
+          path: "/grafana"

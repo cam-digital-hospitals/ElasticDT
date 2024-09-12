@@ -1,32 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-grafana
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}-grafana
+    app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-grafana
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-grafana
+        app: {{ .Release.Name }}
     spec:
       containers:
         - name: grafana
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: 3000
           volumeMounts:
-            - name: grafana-storage
+            - name: {{ .Release.Name }}-storage
               mountPath: /var/lib/grafana
-            - name: grafana-config
+            - name: {{ .Release.Name }}-config
               mountPath: /etc/grafana
       volumes:
-        - name: grafana-config
+        - name: {{ .Release.Name }}-config
           configMap:
-            name: {{ .Release.Name }}-grafana-config
-        - name: grafana-storage
+            name: {{ .Release.Name }}-config
+        - name: {{ .Release.Name }}-storage
           emptyDir: {}
