@@ -49,7 +49,7 @@ releases:
             broker_url: "tcp://test.mosquitto.org:1883"
             topics: ["CamDT/DC1/IfM/#"]
           influxdb:
-            url: "http://influxdb.monitoring:8086"
+            url: "http://ds-influxdb.elasticdt:8086"
             token: "super-secret-token"
             org: "camdt"
             bucket: "default"
