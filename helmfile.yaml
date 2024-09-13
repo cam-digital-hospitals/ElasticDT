@@ -8,6 +8,8 @@ releases:
   - name: ui-homepage
     namespace: elasticdt
     chart: ./Services/ui/homepage
+    needs:
+      - traefik/traefik
     values:
       - container:
           image: ghcr.io/cam-digital-hospitals/elasticdt/ui-homepage
@@ -21,6 +23,8 @@ releases:
   - name: ds-influxdb
     namespace: elasticdt
     chart: ./Services/ds/influxdb
+    needs:
+      - traefik/traefik
     values:
       - admin:
           username: root
@@ -37,6 +41,8 @@ releases:
   - name: di-mqtt
     namespace: elasticdt
     chart: ./Services/di/sensor_mqtt
+    needs:
+      - traefik/traefik
     values:
       - telegraf:
           mqtt:
@@ -50,6 +56,8 @@ releases:
   - name: ui-grafana
     namespace: elasticdt
     chart: ./Services/ui/grafana
+    needs:
+      - traefik/traefik
     values:
       - image:
           tag: "9.5.3"
