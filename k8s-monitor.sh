@@ -20,5 +20,4 @@ cat $HOME/kind-dashboard-token
 echo
 echo
 
-screen -dmS kdashboard kubectl -n monitoring port-forward svc/dashboard-kong-proxy 8443:443
-
+nohup kubectl -n monitoring port-forward svc/dashboard-kong-proxy 8443:443 &>/dev/null &
