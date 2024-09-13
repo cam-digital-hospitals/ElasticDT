@@ -14,8 +14,6 @@ releases:
       - container:
           image: ghcr.io/cam-digital-hospitals/elasticdt/ui-homepage
           tag: latest
-      - service:
-          port: 8081
       - traefik:
           enabled: true
           hostName: localhost
@@ -32,8 +30,6 @@ releases:
           org: camdt
           bucket: default
           token: super-secret-token
-      - service:
-          port: 8086
       - traefik:
           enabled: true
           hostName: influxdb.localhost
@@ -43,6 +39,7 @@ releases:
     chart: ./Services/di/sensor_mqtt
     needs:
       - traefik/traefik
+      - elasticdt/ds-influxdb
     values:
       - telegraf:
           mqtt:
@@ -62,14 +59,17 @@ releases:
       - image:
           tag: "9.5.3"
       - config:
-          serve_from_sub_path: true
-          root_url: "http://localhost/grafana/"
-          anonymous_enabled: true
           org_name: "Main Org."
           org_role: "Viewer"
-      - service:
-          port: 3000
       - traefik:
           enabled: true
           hostName: grafana.localhost
-          path: "/grafana"
+  - name: ds-mysql
+    namespace: elasticdt
+    chart: ./Services/ds/mysql
+    values:
+      - admin:
+          password: cam_ifm_elasticdt
+      - user:
+          name: elasticdt
+          password: password
