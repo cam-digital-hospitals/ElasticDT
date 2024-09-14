@@ -1,0 +1,15 @@
+container:
+  image: anandarup1987/inventory_management
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 8000
+
+# HTTPRoute Configuration for Traefik
+traefik:
+  enabled: true
+  namespace: traefik  # Namespace of the traefik chart
+  hostName: inventory.localhost
+  path: /
+  stripPrefix: false

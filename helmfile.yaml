@@ -5,6 +5,7 @@ releases:
     version: "31.0.0"
     values:
       - ./Infrastructure/traefik.yaml
+
   - name: ui-homepage
     namespace: elasticdt
     chart: ./Services/ui/homepage
@@ -12,7 +13,7 @@ releases:
       - traefik/traefik
     values:
       - container:
-          image: ghcr.io/cam-digital-hospitals/elasticdt/ui-homepage
+          image: anandarup1987/cherrypy-webserver
           tag: latest
       - service:
           port: 8081
@@ -20,6 +21,7 @@ releases:
           enabled: true
           hostName: localhost
           path: /
+
   - name: ds-influxdb
     namespace: elasticdt
     chart: ./Services/ds/influxdb
@@ -38,6 +40,7 @@ releases:
           enabled: true
           hostName: influxdb.localhost
           path: /
+
   - name: di-mqtt
     namespace: elasticdt
     chart: ./Services/di/sensor_mqtt
@@ -53,6 +56,7 @@ releases:
             token: "super-secret-token"
             org: "camdt"
             bucket: "default"
+
   - name: ui-grafana
     namespace: elasticdt
     chart: ./Services/ui/grafana
@@ -73,3 +77,19 @@ releases:
           enabled: true
           hostName: grafana.localhost
           path: "/grafana"
+
+  - name: di-inventory-management
+    namespace: elasticdt
+    createNamespace: true
+    chart: ./Services/di/inv_mgmt
+    values:
+      - container:
+          image: anandarup1987/inventory_management
+          tag: latest
+      - service:
+          port: 12122
+          targetPort: 8000
+      - traefik:
+          enabled: true
+          hostName: inventory.localhost
+          path: /

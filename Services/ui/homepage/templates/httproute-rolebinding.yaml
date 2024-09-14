@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: httproute-viewer-binding
+  namespace: elasticdt
+subjects:
+- kind: ServiceAccount
+  name: default  # This is the default service account used in the namespace
+  namespace: elasticdt
+roleRef:
+  kind: Role
+  name: httproute-viewer
+  apiGroup: rbac.authorization.k8s.io
