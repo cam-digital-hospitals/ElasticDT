@@ -73,3 +73,11 @@ releases:
       - user:
           name: elasticdt
           password: password
+  - name: ds-neo4j
+    namespace: elasticdt
+    chart: ./Services/ds/neo4j
+    values:
+      - neo4j:
+          password: password
+      - traefik:
+          enabled: true
