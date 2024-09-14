@@ -93,3 +93,14 @@ releases:
           enabled: true
           hostName: inventory.localhost
           path: /
+
+  - name: ds-neo4j
+    namespace: elasticdt
+    chart: ./Services/ds/neo4j
+    needs:
+      - traefik/traefik
+    values:
+      - neo4j:
+          password: password
+      - traefik:
+          enabled: true
