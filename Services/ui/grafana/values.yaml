@@ -23,6 +23,15 @@ traefik:
   path: /grafana
   stripPrefix: false
 
+ # Traefik Middleware for Redirect
+  redirectRoot:
+    enabled: true
+    middlewareName: "redirect-root-to-grafana"
+    redirectFrom: "/"
+    redirectTo: "/grafana"
+    redirectPermanent: true  # Set to true for permanent redirect
+
 service:
   type: ClusterIP
   port: 3000
+  
