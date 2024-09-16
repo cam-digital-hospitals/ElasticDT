@@ -1,0 +1,16 @@
+apiVersion: v2
+name: neo4j
+description: A Helm chart for deploying neo4j on Kubernetes
+
+# A semantic version of the chart itself
+version: 1.1.0
+
+# The version of the application being deployed
+appVersion: "latest"
+
+# You can add more metadata as needed
+maintainers:
+  - name: Yin-Chi Chan
+    email: ycc39@cam.ac.uk
+  - name: Anand Mukherjee
+    email: am2910@cam.ac.uk

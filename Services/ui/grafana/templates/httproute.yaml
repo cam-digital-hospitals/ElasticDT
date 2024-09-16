@@ -11,6 +11,20 @@ spec:
   hostnames:
   - {{ .Values.traefik.hostName }}
   rules:
+  # Rule to redirect requests from the root path ("/") to "/grafana"
+  - matches:
+    - path:
+        type: PathPrefix
+        value: "/"
+    filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: "http"
+        path:
+          type: "ReplacePrefixMatch"
+          replacePrefixMatch: "/grafana"
+
+  # Rule to handle requests to the "/grafana" path
   - matches:
     - path:
         type: PathPrefix
@@ -26,7 +40,7 @@ spec:
         group: traefik.io
         kind: Middleware
         name: {{ .Release.Name }}-strip-prefix
----
+--- 
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:

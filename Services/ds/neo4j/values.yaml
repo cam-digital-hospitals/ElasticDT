@@ -1,0 +1,29 @@
+image:
+  tag: community
+
+neo4j:
+  password: password
+
+persistence:
+  enabled: true
+  storageClass: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+service:
+  portHTTP: 7474
+  portBolt: 7687
+
+# HTTPRoute Configuration for Traefik
+traefik:
+  enabled: true
+  namespace: traefik  # Namespace of the traefik chart
+  web:
+    hostName: web.neo4j.localhost
+    path: /
+    stripPrefix: false
+  bolt:
+    hostName: neo4j.localhost
+    path: /
+    stripPrefix: false

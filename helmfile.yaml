@@ -5,6 +5,7 @@ releases:
     version: "31.0.0"
     values:
       - ./Infrastructure/traefik.yaml
+
   - name: ui-homepage
     namespace: elasticdt
     chart: ./Services/ui/homepage
@@ -12,14 +13,13 @@ releases:
       - traefik/traefik
     values:
       - container:
-          image: ghcr.io/cam-digital-hospitals/elasticdt/ui-homepage
+          image: anandarup1987/cherrypy-webserver
           tag: latest
-      - service:
-          port: 8081
       - traefik:
           enabled: true
           hostName: localhost
           path: /
+
   - name: ds-influxdb
     namespace: elasticdt
     chart: ./Services/ds/influxdb
@@ -32,17 +32,17 @@ releases:
           org: camdt
           bucket: default
           token: super-secret-token
-      - service:
-          port: 8086
       - traefik:
           enabled: true
           hostName: influxdb.localhost
           path: /
+
   - name: di-mqtt
     namespace: elasticdt
     chart: ./Services/di/sensor_mqtt
     needs:
       - traefik/traefik
+      - elasticdt/ds-influxdb
     values:
       - telegraf:
           mqtt:
@@ -53,6 +53,7 @@ releases:
             token: "super-secret-token"
             org: "camdt"
             bucket: "default"
+
   - name: ui-grafana
     namespace: elasticdt
     chart: ./Services/ui/grafana
@@ -62,14 +63,32 @@ releases:
       - image:
           tag: "9.5.3"
       - config:
-          serve_from_sub_path: true
-          root_url: "http://localhost/grafana/"
-          anonymous_enabled: true
           org_name: "Main Org."
           org_role: "Viewer"
-      - service:
-          port: 3000
       - traefik:
           enabled: true
           hostName: grafana.localhost
-          path: "/grafana"
+  - name: di-inventory-management
+    namespace: elasticdt
+    chart: ./Services/di/inv_mgmt
+    values:
+      - container:
+          image: anandarup1987/inventory_management
+          tag: latest
+      - service:
+          port: 12122
+          targetPort: 8000
+      - traefik:
+          enabled: true
+          hostName: inventory.localhost
+          path: /
+  - name: ds-neo4j
+    namespace: elasticdt
+    chart: ./Services/ds/neo4j
+    needs:
+      - traefik/traefik
+    values:
+      - neo4j:
+          password: password
+      - traefik:
+          enabled: true

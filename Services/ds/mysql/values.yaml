@@ -1,0 +1,20 @@
+image:
+  tag: latest
+
+admin:
+  password: cam_ifm_elasticdt
+user:
+  name: elasticdt
+  password: password
+db:
+  name: elasticdt
+
+persistence:
+  enabled: true
+  storageClass: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+service:
+  port: 3306
