@@ -13,3 +13,6 @@ nodes:
         hostPort: 9000
         # Limit the traefik dashboard to localhost
         listenAddress: "127.0.0.1"
+    extraMounts:
+      - hostPath: mnt/data
+        containerPath: /data

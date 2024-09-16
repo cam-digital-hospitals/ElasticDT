@@ -19,11 +19,6 @@ service:
 traefik:
   enabled: true
   namespace: traefik  # Namespace of the traefik chart
-  ingress:
-    annotations:
-      kubernetes.io/ingress.class: traefik
-      traefik.ingress.kubernetes.io/websocket: "true"
-      traefik.ingress.kubernetes.io/protocol: "h2c"
   web:
     hostName: web.neo4j.localhost
     path: /
@@ -32,6 +27,3 @@ traefik:
     hostName: neo4j.localhost
     path: /
     stripPrefix: false
-
-  tls:
-      enabled: false

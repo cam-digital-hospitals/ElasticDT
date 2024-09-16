@@ -26,12 +26,6 @@ spec:
         group: traefik.io
         kind: Middleware
         name: {{ .Release.Name }}-strip-prefix
-    # Add RequestHeaderModifier filter for WebSocket
-    - type: RequestHeaderModifier
-      requestHeaderModifier:
-        set:
-          Connection: "upgrade"
-          Upgrade: "websocket"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware

@@ -37,7 +37,7 @@ spec:
             value: "true"
           volumeMounts:
             - name: {{ .Release.Name }}-data
-              mountPath: /var/lib/influxdb
+              mountPath: /var/lib/influxdb2
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:

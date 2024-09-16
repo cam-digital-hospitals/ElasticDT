@@ -16,17 +16,22 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
-        - name: ds-neo4j
-          image: neo4j:{{ .Values.image.tag }}
+        - name: mysql
+          image: mysql:{{ .Values.image.tag }}
           ports:
-            - containerPort: 7474
-            - containerPort: 7687
+            - containerPort: 3306
           env:
-            - name: NEO4J_AUTH
-              value: neo4j/{{ .Values.neo4j.password }}
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.admin.password }}
+            - name: MYSQL_USER
+              value: {{ .Values.user.name }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.user.password }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.db.name }}
           volumeMounts:
             - name: {{ .Release.Name }}-data
-              mountPath: /data
+              mountPath: /var/lib/mysql
       volumes:
         - name: {{ .Release.Name }}-data
           persistentVolumeClaim:

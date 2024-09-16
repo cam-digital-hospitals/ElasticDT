@@ -15,8 +15,6 @@ releases:
       - container:
           image: anandarup1987/cherrypy-webserver
           tag: latest
-      - service:
-          port: 8081
       - traefik:
           enabled: true
           hostName: localhost
@@ -34,8 +32,6 @@ releases:
           org: camdt
           bucket: default
           token: super-secret-token
-      - service:
-          port: 8086
       - traefik:
           enabled: true
           hostName: influxdb.localhost
@@ -46,6 +42,7 @@ releases:
     chart: ./Services/di/sensor_mqtt
     needs:
       - traefik/traefik
+      - elasticdt/ds-influxdb
     values:
       - telegraf:
           mqtt:
@@ -66,21 +63,13 @@ releases:
       - image:
           tag: "9.5.3"
       - config:
-          serve_from_sub_path: true
-          root_url: "http://localhost/grafana/"
-          anonymous_enabled: true
           org_name: "Main Org."
           org_role: "Viewer"
-      - service:
-          port: 3000
       - traefik:
           enabled: true
           hostName: grafana.localhost
-          path: "/grafana"
-
   - name: di-inventory-management
     namespace: elasticdt
-    createNamespace: true
     chart: ./Services/di/inv_mgmt
     values:
       - container:
@@ -93,7 +82,6 @@ releases:
           enabled: true
           hostName: inventory.localhost
           path: /
-
   - name: ds-neo4j
     namespace: elasticdt
     chart: ./Services/ds/neo4j
