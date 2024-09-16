@@ -1,2 +1,24 @@
-.vscode
+**/.vscode/
 mnt/
+
+# Python
+**/__pycache__
+**/poetry.lock
+**/Pipfile.lock
+**/.env/
+**/.venv/
+.ipynb_checkpoints
+
+# JS/TS
+**/node_modules/
+**/yarn.lock
+
+# Secrets
+**/*secret*
+!**/*secret.example*
+
+# Temp files
+**/~*.docx
+**/~*.xlsx
+**/tmp
+**/*.tmp
