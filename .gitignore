@@ -1,13 +1,14 @@
 **/.vscode/
-mnt/
+**/mnt/
 
 # Python
 **/__pycache__
-**/poetry.lock
-**/Pipfile.lock
+**/*.lock
 **/.env/
 **/.venv/
-.ipynb_checkpoints
+**/.ipynb_checkpoints
+**/*.pytest*
+**/tests/**/out
 
 # JS/TS
 **/node_modules/

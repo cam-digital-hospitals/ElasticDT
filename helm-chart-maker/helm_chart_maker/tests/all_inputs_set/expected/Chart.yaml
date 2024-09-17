@@ -1,0 +1,16 @@
+apiVersion: v2
+name: hello
+version: 0.1.0
+appVersion: latest
+description: Hello World!
+keywords:
+- UI
+- requires(ds-hello)
+maintainers:
+- name: Yin-Chi Chan
+  email: ycc39@cam.ac.uk
+  url: https://yinchi.github.io/
+- name: Anandarup Mukherjee
+  email: am2910@cam.ac.uk
+  url: http://anandarup.in/
+
