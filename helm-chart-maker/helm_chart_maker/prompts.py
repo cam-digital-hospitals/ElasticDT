@@ -11,7 +11,7 @@ from .tty import error, instruction, prompt, raw_error
 
 
 def meta() -> ChartMeta:
-    """Main function."""
+    """Get metadata for a Helm chart, which is outputted to Chart.yaml."""
 
     instruction("""\
           Hello from helm-chart-maker!
@@ -83,7 +83,8 @@ def meta() -> ChartMeta:
     print()
     instruction("""\
                 Define the maintainers of this Helm chart and its associated containers.
-                The name is required for each maintainer; emails and URLs are optional.""")
+                The name is required for each maintainer; emails and URLs are optional.
+                Enter a blank name to terminate the list of maintainers.""")
     maintainers = []
     n = 1
     while True:

@@ -27,13 +27,16 @@ def main():
                         metavar='FILENAME')
     parser.add_argument('-o', '--out-dir',
                         default='./out/',
-                        help='The output directory to save the chart to. Defaults to "./out/".',
+                        help='The output directory to save the chart to. Defaults to "./out/". '
+                             'If set to "-", print to screen only.',
                         metavar='OUTDIR')
 
     args = parser.parse_args()
-    out_path = Path(args.out_dir).resolve()
-    print(f'{Fore.YELLOW}Creating "{out_path}" (if not exists)...{Fore.RESET}')
-    Path.mkdir(out_path, parents=True, exist_ok=True)
+
+    if args.out_dir != '-':
+        out_path = Path(args.out_dir).resolve()
+        print(f'{Fore.YELLOW}Creating "{out_path}" (if not exists)...{Fore.RESET}')
+        Path.mkdir(out_path, parents=True, exist_ok=True)
 
     if args.json is None:
         meta = prompts.meta()
@@ -44,8 +47,9 @@ def main():
         chart_yaml = generate_chart_yaml(chart_data)
         tty.instruction('OUTPUT - Chart.yaml:')
         print(chart_yaml)
-        with open(Path(out_path) / 'Chart.yaml', 'w', encoding='utf-8') as fp:
-            print(chart_yaml, file=fp)
+        if args.out_dir != '-':
+            with open(Path(out_path) / 'Chart.yaml', 'w', encoding='utf-8') as fp:
+                print(chart_yaml, file=fp)
     else:
         tty.error('Non-interactive (JSON) mode not yet implemented.')
 
