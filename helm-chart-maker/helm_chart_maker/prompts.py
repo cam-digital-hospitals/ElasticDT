@@ -1,6 +1,5 @@
 """Helm chart maker.  Asks a bunch of questions to make a Helm chart."""
 
-import json
 import re
 
 import semver
@@ -114,7 +113,7 @@ def meta() -> ChartMeta:
         name=chart_name,
         description=chart_description,
         version=chart_version,
-        app_version=chart_app_version,
+        appVersion=chart_app_version,
         tags=tags,
         maintainers=maintainers
     )
@@ -124,6 +123,14 @@ def meta() -> ChartMeta:
 def deployment() -> Deployment:
     """Prompt for information relating to a Helm chart's Deployment specification,
     excluding information in the ChartMeta object."""
+
+    print()
+    instruction("""\
+                Who do you want to run the pods in this deployment as? If not "default",
+                you will be responsible for creating this ServiceAccount yourself and
+                setting the correct RoleBindings or ClusterRoleBindings.
+                (default: default)""")
+    sa_name = prompt("saName: ", default="default")
 
     def get_containers() -> list[dict]:
         """Get the list of containers."""
@@ -157,7 +164,8 @@ def deployment() -> Deployment:
                 image_tag = image_tag.split(':')
 
                 assert len(image_tag) in (1, 2), \
-                    """Input must be in the format "image[:tag]". Try again."""
+                    """Input must be in the format "image[:tag]". Only 0 or 1 colons are allowed
+                    in the imput. Try again."""
                 if len(image_tag) == 1:
                     image_tag.append('latest')
             except AssertionError as e:
@@ -206,9 +214,10 @@ def deployment() -> Deployment:
                         PersistentVolumeClaim, ConfigMap, or Secret. Note that we will only
                         prompt for the name of the data object for now, you can use our
                         separate tools later for creating the data object itself.""")
-            data = []
+            env_from = []
+            mounts = []
             while True:
-                x = prompt("1. PVC; 2: ConfigMap; 3: Secret; 4(default): quit [1-4]: ",
+                x = prompt("1. PVC; 2: ConfigMap; 3: Secret; 4(default): done [1-4]: ",
                            default='4')
                 if x == '4':
                     print(f"{Fore.YELLOW}End of specification for Container #{
@@ -216,30 +225,39 @@ def deployment() -> Deployment:
                     break
                 if x in ['1', '2', '3']:
                     t = int(x)
-                    data_type = ['', 'pvc', 'configMap', 'secret'][t]
+                    data_type = ['', 'persistentVolumeClaim', 'configMap', 'secret'][t]
                     # TODO check RFC 1035 compatibility
                     data_name = prompt('data_name: ')
-                    x = f"Enter the mount path for {data_name}."
+                    x = f"Enter the **target** mount path for {data_name}, e.g. \"/data/dir1\"."
                     if t in (2, 3):
                         x += (
-                            "If \"envFrom\" is supplied, the "
+                            " If \"envFrom\" is supplied, the "
                             f"{'ConfigMap' if t == 2 else 'Secret'} will be converted into a "
                             "list of environment variables instead."
                         )
+                    instruction(x)
                     # TODO check non-empty string
                     mount_path = prompt('mountPath: ')
-                    data.append({
-                        'type': data_type,
-                        'name': data_name,
-                        'mount_path': mount_path
-                    })
+                    if t in (2, 3) and mount_path.strip().lower() == 'envfrom':
+                        env_from.append({
+                            'type': data_type,
+                            'name': data_name
+                        })
+                    else:
+                        mounts.append({
+                            'type': data_type,
+                            'name': data_name,
+                            'mount_path': mount_path
+                        })
                     print(f"{Fore.YELLOW}Added {data_name} to container.{Fore.YELLOW}\n")
 
             containers.append({
-                'image': image_tag[0],
+                'name': image_tag[0].split('/')[-1],
+                'image': f'{image_tag[0]}:{image_tag[1]}',
                 'tag': image_tag[1],
                 'ports': sorted(ports),
-                'data': data
+                'envFrom': env_from,
+                'mounts': mounts
             })
 
     containers = get_containers()
@@ -261,4 +279,4 @@ def deployment() -> Deployment:
         except AssertionError as e:
             error(str(e))
 
-    return Deployment(replicas=replicas, containers=containers)
+    return Deployment(replicas=replicas, saName=sa_name, containers=containers)

@@ -30,7 +30,7 @@ def check_tags(tags: Sequence[str]) -> Sequence[str]:
     return tags
 
 
-class FullChart(pyd.BaseModel):
+class FullValues(pyd.BaseModel):
     """The full set of inputs for generating the Helm chart."""
     meta: 'ChartMeta'
     deployment: 'Deployment'
@@ -42,7 +42,7 @@ class ChartMeta(pyd.BaseModel):
     name: str
     description: str
     version: SemanticVersion
-    app_version: Optional[str]
+    appVersion: Optional[str]
     tags: Annotated[Sequence[str], pyd.AfterValidator(check_tags)]
     maintainers: Sequence['Maintainer']
 
@@ -58,19 +58,27 @@ class Maintainer(pyd.BaseModel):
 class Deployment(pyd.BaseModel):
     """Data about a deployment, excluding the common information in the ChartMeta instance."""
     replicas: pyd.PositiveInt
+    saName: str
     containers: Sequence['Container']
 
 
 class Container(pyd.BaseModel):
     """Data about a container in a pod (for a deployment)."""
+    name: str
     image: str
-    tag: str
     ports: set[Annotated[int, Ge(0), Le(30000)]]
-    data: Sequence['ContainerData']
+    envFrom: Sequence['EnvFrom']
+    mounts: Sequence['Mount']
 
 
-class ContainerData(pyd.BaseModel):
+class EnvFrom(pyd.BaseModel):
+    """Data about an envFrom directive."""
+    type: Literal['configMap', 'secret']
+    name: str
+
+
+class Mount(pyd.BaseModel):
     """Container data specification."""
-    type: Literal['pvc','configMap','secret']
+    type: Literal['persistentVolumeClaim', 'configMap', 'secret']
     name: str
     mount_path: PathLike  # We will treat "envFrom" as a special case

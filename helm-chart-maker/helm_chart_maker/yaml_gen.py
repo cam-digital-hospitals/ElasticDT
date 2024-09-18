@@ -2,16 +2,16 @@
 
 import yaml
 
-from .models import FullChart
+from .models import FullValues
 
 
-def generate_chart_yaml(data: FullChart):
+def generate_chart_yaml(data: FullValues):
     """Generate Chart.yaml."""
     meta = {
         'apiVersion': 'v2',
         'name': data.meta.name,
         'version': str(data.meta.version),
-        'appVersion': x if (x:= data.meta.app_version) else None,
+        'appVersion': x if (x:= data.meta.appVersion) else None,
         'description': x if (x := data.meta.description) else None,
         'keywords': list(data.meta.tags),
         'maintainers': (

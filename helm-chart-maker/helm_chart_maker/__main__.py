@@ -1,7 +1,9 @@
 """Rntrypoint for helm_chart_maker."""
 
 import argparse
+import os
 from pathlib import Path
+import shutil
 from textwrap import dedent
 
 import yaml
@@ -41,16 +43,18 @@ def main():
 
     if args.json is None:
 
+        n = 2
+
         cli.instruction("Hello from helm-chart-maker!")
         print()
-        cli.instruction("""############ PART 1 of {n} -- CHART METADATA ############""")
+        cli.instruction(f"""############ PART 1 of {n} -- CHART METADATA ############""")
         chart_meta = prompts.meta()
 
         print()
-        cli.instruction("""############ PART 2 of {n} -- DEPLOYMENT ############""")
+        cli.instruction(f"""############ PART 2 of {n} -- DEPLOYMENT ############""")
         deployment_data = prompts.deployment()
 
-        full_chart = models.FullChart(
+        full_values = models.FullValues(
             meta=chart_meta,
             deployment=deployment_data
         )
@@ -58,16 +62,34 @@ def main():
         print()
         cli.instruction("######################################################################")
         print()
-        cli.instruction('INPUT SUMMARY:')
-        print(yaml.dump(full_chart.model_dump(mode='json'), sort_keys=False))
+
+        # VALUES.YAML
+        cli.instruction('OUTPUT - values.yaml:')
+        values_yaml = yaml.dump(full_values.model_dump(mode='json'), sort_keys=False)
+        print(values_yaml)
+        if args.out_dir != '-':
+            with open(out_path / 'values.yaml', 'w', encoding='utf-8') as fp:
+                print(values_yaml, file=fp)
 
         # CHART.YAML
-        chart_yaml = generate_chart_yaml(full_chart)
+        chart_yaml = generate_chart_yaml(full_values)
         cli.instruction('OUTPUT - Chart.yaml:')
         print(chart_yaml)
         if args.out_dir != '-':
-            with open(Path(out_path) / 'Chart.yaml', 'w', encoding='utf-8') as fp:
+            with open(out_path / 'Chart.yaml', 'w', encoding='utf-8') as fp:
                 print(chart_yaml, file=fp)
+        
+        # COPY TEMPLATES
+        if args.out_dir != '-':
+            template_src = Path(__file__).parent / "../templates"
+            template_src = template_src.resolve()
+
+            # Remove existing directory if exists
+            if os.path.exists(out_path / "templates"):
+                shutil.rmtree(out_path / "templates")
+            shutil.copytree(template_src, out_path / "templates")
+
+
     else:
         cli.error('Non-interactive (JSON) mode not yet implemented.')
 

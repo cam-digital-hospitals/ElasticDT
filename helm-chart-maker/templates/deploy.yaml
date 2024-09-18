@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app: "{{ .Release.Name }}"
+spec:
+  replicas: {{ .replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Release.Name }}"
+{{- with .Values.deployment }}
+  spec:
+    replicas: {{ .replicas }}
+    serviceAccountName: "{{ .saName }}"
+    containers:
+    {{- range .containers }}
+      - name: "{{ .name }}"
+        image: "{{ .image }}"
+        {{- if .ports }}
+        ports:
+          {{- range .ports }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+        {{- if .envFrom }}
+        envFrom:
+          {{- range .envFrom }}
+          - {{ .type | title -}}Ref: 
+            name: "{{ .name }}"
+          {{- end }}
+        {{- end }}
+        volumeMounts:
+          {{- if .mounts }}
+          {{- range .mounts }}
+          - name: "{{ .name -}}-vol"
+            mountPath: "{{ .mount_path }}"
+          {{- end }}
+          {{- end }}
+    {{- end }}
+
+    {{- range .containers }}
+    volumes:
+    {{- range .mounts }}
+      - name: "{{ .name -}}-vol"
+
+        {{- if eq .type "persistentVolumeClaim" }}
+        persistentVolumeClaim:
+          claimName: "{{ .name }}"
+
+        {{- else if eq .type "configMap" }}
+        configMap:
+          name: "{{ .name }}"
+
+        {{- else if eq .type "secret"}}
+        secret:
+          secretName: "{{ .name }}"
+        {{- end}}
+    {{- end}}
+    {{- end}}
+{{- end }}

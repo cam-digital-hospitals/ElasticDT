@@ -18,7 +18,7 @@ def instruction(s: str, hanging = 0):
         print(f"{Fore.GREEN}{x}{Fore.RESET}")
 
 
-def prompt(s: str, default: Any = ''):
+def prompt(s: str, /, *, default: Any = ''):
     """Prompt the user for input."""
     try:
         ret = input(f"{Fore.YELLOW}{s}{Fore.RESET}")
