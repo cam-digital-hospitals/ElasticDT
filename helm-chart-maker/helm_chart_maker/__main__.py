@@ -1,14 +1,14 @@
 """Rntrypoint for helm_chart_maker."""
 
 import argparse
-import sys
 from pathlib import Path
 from textwrap import dedent
 
+import yaml
 from colorama import Fore
 
-from . import models, prompts, tty
-from .chart_yaml_gen import generate_chart_yaml
+from . import cli, models, prompts
+from .yaml_gen import generate_chart_yaml
 
 
 def main():
@@ -35,23 +35,41 @@ def main():
 
     if args.out_dir != '-':
         out_path = Path(args.out_dir).resolve()
-        print(f'{Fore.YELLOW}Creating "{out_path}" (if not exists)...{Fore.RESET}')
+        print(f'{Fore.YELLOW}Creating "{
+              out_path}" (if not exists)...{Fore.RESET}')
         Path.mkdir(out_path, parents=True, exist_ok=True)
 
     if args.json is None:
-        meta = prompts.meta()
+
+        cli.instruction("Hello from helm-chart-maker!")
+        print()
+        cli.instruction("""############ PART 1 of {n} -- CHART METADATA ############""")
+        chart_meta = prompts.meta()
 
         print()
-        chart_data = models.ChartData(meta=meta)
+        cli.instruction("""############ PART 2 of {n} -- DEPLOYMENT ############""")
+        deployment_data = prompts.deployment()
 
-        chart_yaml = generate_chart_yaml(chart_data)
-        tty.instruction('OUTPUT - Chart.yaml:')
+        full_chart = models.FullChart(
+            meta=chart_meta,
+            deployment=deployment_data
+        )
+        print()
+        print()
+        cli.instruction("######################################################################")
+        print()
+        cli.instruction('INPUT SUMMARY:')
+        print(yaml.dump(full_chart.model_dump(mode='json'), sort_keys=False))
+
+        # CHART.YAML
+        chart_yaml = generate_chart_yaml(full_chart)
+        cli.instruction('OUTPUT - Chart.yaml:')
         print(chart_yaml)
         if args.out_dir != '-':
             with open(Path(out_path) / 'Chart.yaml', 'w', encoding='utf-8') as fp:
                 print(chart_yaml, file=fp)
     else:
-        tty.error('Non-interactive (JSON) mode not yet implemented.')
+        cli.error('Non-interactive (JSON) mode not yet implemented.')
 
 
 if __name__ == '__main__':

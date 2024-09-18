@@ -2,17 +2,23 @@
 
 import sys
 from textwrap import dedent, wrap
+from typing import Any
 
 from colorama import Fore
 
+COLUMNS = 80
+EXIT_ON_ERROR = False
 
-def instruction(s: str):
+
+def instruction(s: str, hanging = 0):
     """Unident and print a Python string/docstring."""
-    for x in wrap(' '.join(dedent(s).split('\n')), 100):
+
+    # Dedent, remove line breaks, then re-wrap to COLUMNS columns wide
+    for x in wrap(' '.join(dedent(s).split('\n')), COLUMNS, subsequent_indent=' '*hanging):
         print(f"{Fore.GREEN}{x}{Fore.RESET}")
 
 
-def prompt(s: str, default=''):
+def prompt(s: str, default: Any = ''):
     """Prompt the user for input."""
     try:
         ret = input(f"{Fore.YELLOW}{s}{Fore.RESET}")
@@ -31,10 +37,12 @@ def prompt(s: str, default=''):
 
 def error(s: str):
     """Display an error message."""
-    for x in wrap(' '.join(dedent(s).split('\n')), 100):
+
+    # Dedent, remove line breaks, then re-wrap to COLUMNS columns wide
+    for x in wrap(' '.join(dedent(s).split('\n')), COLUMNS):
         print(f"{Fore.RED}{x}{Fore.RESET}")
 
-    # Prevent infinite "Try again" loop:
+    # Prevent infinite "Try again" loop when stdin is not a terminal:
     if not sys.stdin.isatty():
         exit(1)
 

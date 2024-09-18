@@ -17,5 +17,5 @@ def test_all_inputs_set():
                 main()
     x = dircmp(workdir+'/out', workdir+'/expected')
     assert len(x.left_only) == 0, f'Files found only in "out" directory: {x.left_only}'
-    assert len(x.right_only) == 0, f'Files found only in "expected" directory {x.right_only}'
+    assert len(x.right_only) == 0, f'Files found only in "expected" directory: {x.right_only}'
     assert len(x.diff_files) == 0, f'Some files do not match expected output: {x.diff_files}'

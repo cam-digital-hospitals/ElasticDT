@@ -1,8 +1,11 @@
 """Pydantic dataclasses for helm_chart_maker."""
 
 from collections.abc import Sequence
-from typing import Annotated, Optional
+from os import PathLike
+from typing import Annotated, Literal, Optional
+
 import pydantic as pyd
+from annotated_types import Ge, Le
 from pydantic_extra_types.semantic_version import SemanticVersion
 
 TAGS = {
@@ -26,10 +29,14 @@ def check_tags(tags: Sequence[str]) -> Sequence[str]:
 
     return tags
 
-class ChartData(pyd.BaseModel):
+
+class FullChart(pyd.BaseModel):
     """The full set of inputs for generating the Helm chart."""
     meta: 'ChartMeta'
+    deployment: 'Deployment'
 
+
+### Chart Meta ###
 class ChartMeta(pyd.BaseModel):
     """Metadata about the Helm chart that appears in Chart.yaml."""
     name: str
@@ -45,3 +52,25 @@ class Maintainer(pyd.BaseModel):
     name: str
     email: Optional[pyd.EmailStr] = pyd.Field(default=None)
     url: Optional[pyd.HttpUrl] = pyd.Field(default=None)
+
+
+### Deployment ###
+class Deployment(pyd.BaseModel):
+    """Data about a deployment, excluding the common information in the ChartMeta instance."""
+    replicas: pyd.PositiveInt
+    containers: Sequence['Container']
+
+
+class Container(pyd.BaseModel):
+    """Data about a container in a pod (for a deployment)."""
+    image: str
+    tag: str
+    ports: set[Annotated[int, Ge(0), Le(30000)]]
+    data: Sequence['ContainerData']
+
+
+class ContainerData(pyd.BaseModel):
+    """Container data specification."""
+    type: Literal['pvc','configMap','secret']
+    name: str
+    mount_path: PathLike  # We will treat "envFrom" as a special case
